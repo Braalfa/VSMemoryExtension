@@ -4,9 +4,6 @@ exports.activate = void 0;
 const path = require("path");
 const vscode = require("vscode");
 
-var file = fopen("/home/brayan/m.txt", 3);// opens the file for writing
-fwrite(file, "pepe");// str is the content that is to be written into the file. 
-
 const cats = {
     'Coding Cat': 'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
     'Compiling Cat': 'https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif',
@@ -56,20 +53,20 @@ class CatCodingPanel {
         this._panel.webview.onDidReceiveMessage(message => {
             console.log(message.text);
             switch (message.command) {
-                case 'settings':
-                    vscode.window.showErrorMessage(message.text);
+               // case 'settings':
+               //     vscode.window.showErrorMessage(message.text);
                     //var result=vsinterface.setClientSettings(message.ip, message.port, message.pass, message.user)
                     //this._panel.webview.postMessage({ command: 'status', data:result });
-                    return;
+                 //   return;
                 case 'alert':
                     vscode.window.showErrorMessage(message.text);
                     return;
-                case 'local':
-                    vsinterface.setLocal(true);
-                    return;
-                case 'remote':
-                    vsinterface.setLocal(false);
-                    return;
+                //case 'local':
+                //    vsinterface.setLocal(true);
+                //    return;
+                //case 'remote':
+                //    vsinterface.setLocal(false);
+                //    return;
             }
         }, null, this._disposables);
     }
@@ -100,9 +97,9 @@ class CatCodingPanel {
         this._panel.webview.postMessage({ command: 'refactor' });
     }
     doStuff() {
-        setInterval(() => {
-            this._panel.webview.postMessage({ command: 'data', data: vsinterface.getUpdate() });
-        }, 100);
+        //setInterval(() => {
+        //    this._panel.webview.postMessage({ command: 'data', data: vsinterface.getUpdate() });
+        //}, 100);
     }
     dispose() {
         CatCodingPanel.currentPanel = undefined;

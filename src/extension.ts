@@ -123,12 +123,12 @@ class CatCodingPanel {
 					case 'alert':
 						vscode.window.showErrorMessage(message.text);
 						return;
-					case 'local':
-						vsinterface.setLocal(true);
-						return;
-					case 'remote':
-						vsinterface.setLocal(false);
-						return;
+				//	case 'local':
+				//		vsinterface.setLocal(true);
+				//		return;
+				//	case 'remote':
+				//		vsinterface.setLocal(false);
+				//		return;
 				}
 			},
 			null,
@@ -145,10 +145,10 @@ class CatCodingPanel {
 	}
 
 	public doStuff(){
-		setInterval(() => {
-		
-			this._panel.webview.postMessage({ command: 'data', data:vsinterface.getUpdate() });
-        }, 100);
+	//	setInterval(() => {
+	//	
+	//		this._panel.webview.postMessage({ command: 'data', data:vsinterface.getUpdate() });
+    //  }, 100);
 	}
 
 	public dispose() {

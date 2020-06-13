@@ -2,8 +2,6 @@
 // It cannot access the main VS Code APIs directly.
 
 var vscode;
-const path;
-
 
 
 
@@ -80,9 +78,6 @@ function onRemoteSettings(){
 
 (function () {
 
-
-    file = fopen("c:\MyFile.txt", 3);// opens the file for writing
-    fwrite(file, str);// str is the content that is to be written into the file. 
 
     vscode = acquireVsCodeApi();
 
