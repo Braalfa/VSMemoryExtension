@@ -2,21 +2,65 @@
 // It cannot access the main VS Code APIs directly.
 
 var vscode;
+const path;
+
+
+
+
+function updateStuff(stuff){
+    var table = document.getElementById('table');
+
+    table.innerHTML = "<tr><th>Id</th><th>Address</th><th>Type</th><th>Value</th><th>References</th></tr>";
+    var status=stuff;
+    status=status.split(";");
+    for (var i = 0; i < status.length; i++) {
+        var str = document.createElement("tr");
+        for (var j = 0; j < 5; j++) {
+            var cell = document.createElement("td");
+            var textocell = document.createTextNode(status[i+j*5]);
+            cell.appendChild(textocell);
+            str.appendChild(cell);
+        }
+    }
+    table.appendChild(str);
+
+}
+
+
+function updateStatus(success){
+    if(success){
+        remote.disabled=false;
+        onRemote();
+
+    }else{
+        onLocal();
+        remote.disabled=true;
+        vscode.postMessage({
+            command: 'alert',
+            text: "Connection failed 🐛"
+        });
+
+    }
+}
 
 function onRemote() {
     const local = document.getElementById('local');
     const remote = document.getElementById('remote');
-
     local.checked = false;
     remote.checked = true;
+    vscode.postMessage({
+        command: 'remote',
+    });
 };
 
 function onLocal(){
     const local = document.getElementById('local');
     const remote = document.getElementById('remote');
-
     local.checked = true;
     remote.checked = false;
+    vscode.postMessage({
+        command: 'local',
+    });
 
 };
 
@@ -28,27 +72,20 @@ function onRemoteSettings(){
     var port=document.getElementById("port");
     var pass=document.getElementById("password");
     var user=document.getElementById("user");
-
-    var success=false;
-
-    if(false){
-        remote.disabled=false;
-        onRemote();
-        vscode.postMessage({
-            text: "Connection succesful"
-        });
-    }else{
-        onLocal();
-        remote.disabled=true;
-        vscode.postMessage({
-            command: 'alert',
-            text: "Connection failed 🐛"
-        });
-    }
+    vscode.postMessage({
+        command:'alert',
+        text:"madremia"
+    });
 }
 
 (function () {
+
+
+    file = fopen("c:\MyFile.txt", 3);// opens the file for writing
+    fwrite(file, str);// str is the content that is to be written into the file. 
+
     vscode = acquireVsCodeApi();
+
 
     const oldState = vscode.getState();
 
@@ -67,24 +104,29 @@ function onRemoteSettings(){
 
     
 
-    var table = document.getElementById('table');
-
     setInterval(() => {
-        table.innerHTML = "<tr><th>Id</th><th>Address</th><th>Type</th><th>Value</th><th>References</th></tr>";
-        var status="1;2;3;4;5;6;7;8;9;10";
-        status=status.split(";");
-        for (var i = 0; i < status.length; i++) {
-            var str = document.createElement("tr");
-            for (var j = 0; j < 5; j++) {
-                var cell = document.createElement("td");
-                var textocell = document.createTextNode(status[i+j*5]);
-                cell.appendChild(textocell);
-                str.appendChild(cell);
-            }
-            table.appendChild(str);
-        }}, 100);
-    
 
+        }, 100);
+    
     setInterval(() => {
         counter.textContent = currentCount++;}, 100);
+
+        window.addEventListener('message', event => {
+            const message = event.data; // The json data that the extension sent
+            switch (message.command) {
+                case 'refactor':
+                    currentCount = Math.ceil(currentCount * 0.5);
+                    counter.textContent = currentCount;
+                    break;
+                case 'data':
+                    updateStuff(message.data);
+                    break;
+                case "status":
+                    updateStatus(message.data);
+                    break;
+            }
+        });
+        // Handle messages sent from the extension to the webview
+        
+
 }());
