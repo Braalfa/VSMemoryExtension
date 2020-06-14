@@ -52,15 +52,51 @@ class CatCodingPanel {
 			: undefined;
 
 			var s=vscode.workspace.rootPath;
-			if(s!=undefined){
-				var values= ["Node.h", "client.h", "GarbageCollector.h", "heap.h" ,"hl_md5.h","hl_md5wrapper.h", "json.h", "List.h", "TList.h"," TNode.h", "VSPtr.h", "hl_exception.h", "hl_hashwrapper.h","hl_types.h" ]
-				for(var i=0; i<values.length; i++){
-					fs.copyFile(path.join("/home/brayan/Documents/Projects/VSCodeMemory",values[i]), path.join(s, values[i]), (err) => {
+				if(s!=undefined){
+					fs.copyFile("/home/brayan/Documents/Projects/VSCodeMemory/Library/libvscode.so", path.join(s, "libvscode.so"), (err) => {
 						if (err) throw err;
-						console.log(values[i]+"was copied to destination");
+						console.log("was copied to destination");
 					});
-				}        
-			}
+				
+					var fileName = path.join(s, ".vscode/c_cpp_properties.json");
+					var file = require(fileName);
+					
+					file.configurations[0].includePath[file.configurations[0].includePath.length]="/home/brayan/Documents/Projects/VSCodeMemory/Library/**";
+
+					fs.writeFile(fileName,JSON.stringify(file, null, 2), function writeJSON(err) {
+					  if (err) return console.log(err);
+					  console.log(JSON.stringify(file));
+					  console.log('writing to ' + fileName);
+					});
+
+
+					fileName = path.join(s, ".vscode/tasks.json");
+					file = require(fileName);
+					file.tasks[0].args = [
+						"${file}",
+						"-I/home/brayan/Documents/Projects/VSCodeMemory",
+						"-L/home/brayan/Documents/Projects/VSCodeMemory/Library",
+						"-lvscode",
+						"-lstdc++",
+						"-o",
+						"${fileDirname}/a.out"
+					]
+					fs.writeFile(fileName, JSON.stringify(file, null, 2), function writeJSON(err) {
+						if (err)
+							return console.log(err);
+						console.log(JSON.stringify(file));
+						console.log('writing to ' + fileName);
+					});
+
+
+					
+				}
+				
+				
+				
+
+				
+			
 
 
 		// If we already have a panel, show it.
