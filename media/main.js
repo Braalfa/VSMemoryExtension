@@ -71,8 +71,11 @@ function onRemoteSettings(){
     var pass=document.getElementById("password");
     var user=document.getElementById("user");
     vscode.postMessage({
-        command:'alert',
-        text:"madremia"
+        command:'settings',
+        ip:"ip",
+        port:"port",
+        password:"password",
+        user:"user"
     });
 }
 
@@ -80,7 +83,6 @@ function onRemoteSettings(){
 
 
     vscode = acquireVsCodeApi();
-
 
     const oldState = vscode.getState();
 

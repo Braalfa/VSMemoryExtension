@@ -125,18 +125,19 @@ class CatCodingPanel {
 				switch (message.command) {
 					case 'settings':
 						vscode.window.showErrorMessage(message.text);
-						//var result=vsinterface.setClientSettings(message.ip, message.port, message.pass, message.user)
-						//this._panel.webview.postMessage({ command: 'status', data:result });
+						//Code for set settings
 						return;
 					case 'alert':
 						vscode.window.showErrorMessage(message.text);
 						return;
-				//	case 'local':
-				//		vsinterface.setLocal(true);
-				//		return;
-				//	case 'remote':
-				//		vsinterface.setLocal(false);
-				//		return;
+					case 'local':
+						vscode.window.showErrorMessage(message.text);
+						//Code for set local
+						return;
+					case 'remote':
+						vscode.window.showErrorMessage(message.text);
+						//Code for remote
+						return;
 				}
 			},
 			null,
@@ -153,8 +154,8 @@ class CatCodingPanel {
 	}
 
 	public doStuff(){
+	// Send file info
 	//	setInterval(() => {
-	//	
 	//		this._panel.webview.postMessage({ command: 'data', data:vsinterface.getUpdate() });
     //  }, 100);
 	}
