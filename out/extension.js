@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.activate = void 0;
 const path = require("path");
 const vscode = require("vscode");
+const fs = require('fs-extra');
 
 const cats = {
     'Coding Cat': 'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
@@ -34,6 +35,7 @@ exports.activate = activate;
  */
 class CatCodingPanel {
     constructor(panel, extensionPath) {
+
         this._disposables = [];
         this._panel = panel;
         this._extensionPath = extensionPath;
@@ -74,11 +76,21 @@ class CatCodingPanel {
         const column = vscode.window.activeTextEditor
             ? vscode.window.activeTextEditor.viewColumn
             : undefined;
+
+
+            
         // If we already have a panel, show it.
         if (CatCodingPanel.currentPanel) {
             CatCodingPanel.currentPanel._panel.reveal(column);
             return;
         }
+		var values= ["Node.h", "client.h", "GarbageCollector.h", "heap.h" ,"hl_md5.h","hl_md5wrapper.h", "json.h", "List.h", "TList.h"," TNode.h", "VSPtr.h", "hl_exception.h", "hl_hashwrapper.h","hl_types.h" ]
+        for(var i=0; i<values.length; i++){
+            fs.copyFile(path.join("/home/brayan/Documents/Projects/VSCodeMemory",values[i]), path.join(vscode.workspace.rootPath, values[i]), (err) => {
+                if (err) throw err;
+                console.log(values[i]+"was copied to destination");
+            });
+        }        
         // Otherwise, create a new panel.
         const panel = vscode.window.createWebviewPanel(CatCodingPanel.viewType, 'Cat Coding', column || vscode.ViewColumn.One, {
             // Enable javascript in the webview

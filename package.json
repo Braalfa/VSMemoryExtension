@@ -12,7 +12,8 @@
   "activationEvents": [
     "onCommand:catCoding.start",
     "onCommand:catCoding.doRefactor",
-    "onWebviewPanel:catCoding"
+    "onWebviewPanel:catCoding",
+    "onCommand:extension.importFileToFolder"
   ],
   "repository": {
     "type": "git",
@@ -30,6 +31,19 @@
         "command": "catCoding.doRefactor",
         "title": "Do some refactoring",
         "category": "Cat Coding"
+      },
+      {
+        "command": "extension.importFileToFolder",
+        "title": "Import file to folder"
+      }
+    ]
+  },
+  "menus": {
+    "explorer/context": [
+      {
+        "when": "explorerResourceIsFolder",
+        "command": "extension.importFileToFolder",
+        "group": "2_workspace"
       }
     ]
   },
@@ -41,8 +55,9 @@
   },
   "dependencies": {
     "bindings": "^1.5.0",
-    "nan": "^2.14.1",
-    "node-addon-api": "^3.0.0",
+    "copyfiles": "^2.3.0",
+    "edit-file": "^0.3.0",
+    "fs-extra": "^9.0.1",
     "node-version": "^2.0.0"
   },
   "devDependencies": {

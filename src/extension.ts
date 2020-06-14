@@ -1,6 +1,8 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
+import * as fs from "fs";
 
+// destination.txt will be created or overwritten by default.
 
 const cats = {
 	'Coding Cat': 'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
@@ -8,19 +10,13 @@ const cats = {
 	'Testing Cat': 'https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif'
 };
 
+
 export function activate(context: vscode.ExtensionContext) {
 
+	
 	context.subscriptions.push(
 		vscode.commands.registerCommand('catCoding.start', () => {
 			CatCodingPanel.createOrShow(context.extensionPath);
-		})
-	);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand('catCoding.doRefactor', () => {
-			if (CatCodingPanel.currentPanel) {
-				CatCodingPanel.currentPanel.doRefactor();
-			}
 		})
 	);
 
@@ -54,6 +50,18 @@ class CatCodingPanel {
 		const column = vscode.window.activeTextEditor
 			? vscode.window.activeTextEditor.viewColumn
 			: undefined;
+
+			var s=vscode.workspace.rootPath;
+			if(s!=undefined){
+				var values= ["Node.h", "client.h", "GarbageCollector.h", "heap.h" ,"hl_md5.h","hl_md5wrapper.h", "json.h", "List.h", "TList.h"," TNode.h", "VSPtr.h", "hl_exception.h", "hl_hashwrapper.h","hl_types.h" ]
+				for(var i=0; i<values.length; i++){
+					fs.copyFile(path.join("/home/brayan/Documents/Projects/VSCodeMemory",values[i]), path.join(s, values[i]), (err) => {
+						if (err) throw err;
+						console.log(values[i]+"was copied to destination");
+					});
+				}        
+			}
+
 
 		// If we already have a panel, show it.
 		if (CatCodingPanel.currentPanel) {
