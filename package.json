@@ -10,9 +10,8 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:catCoding.start",
-    "onCommand:catCoding.doRefactor",
-    "onWebviewPanel:catCoding",
+    "onCommand:vscodememory.start",
+    "onWebviewPanel:vsCoding",
     "onCommand:extension.importFileToFolder"
   ],
   "repository": {
@@ -23,14 +22,9 @@
   "contributes": {
     "commands": [
       {
-        "command": "catCoding.start",
-        "title": "Start cat coding session",
-        "category": "Cat Coding"
-      },
-      {
-        "command": "catCoding.doRefactor",
-        "title": "Do some refactoring",
-        "category": "Cat Coding"
+        "command": "vscodememory.start",
+        "title": "Start Memory Visualizer",
+        "category": "VSCodeMemory"
       },
       {
         "command": "extension.importFileToFolder",

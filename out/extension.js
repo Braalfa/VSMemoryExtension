@@ -11,15 +11,15 @@ const cats = {
     'Testing Cat': 'https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif'
 };
 function activate(context) {
-    context.subscriptions.push(vscode.commands.registerCommand('catCoding.start', () => {
-        CatCodingPanel.createOrShow(context.extensionPath);
+    context.subscriptions.push(vscode.commands.registerCommand('vscodememory.start', () => {
+        CodingPanel.createOrShow(context.extensionPath);
     }));
     if (vscode.window.registerWebviewPanelSerializer) {
         // Make sure we register a serializer in activation event
-        vscode.window.registerWebviewPanelSerializer(CatCodingPanel.viewType, {
+        vscode.window.registerWebviewPanelSerializer(CodingPanel.viewType, {
             async deserializeWebviewPanel(webviewPanel, state) {
                 console.log(`Got state: ${state}`);
-                CatCodingPanel.revive(webviewPanel, context.extensionPath);
+                CodingPanel.revive(webviewPanel, context.extensionPath);
             }
         });
     }
@@ -28,7 +28,7 @@ exports.activate = activate;
 /**
  * Manages cat coding webview panels
  */
-class CatCodingPanel {
+class CodingPanel {
     constructor(panel, extensionPath) {
         this._disposables = [];
         this._panel = panel;
@@ -39,12 +39,6 @@ class CatCodingPanel {
         // Listen for when the panel is disposed
         // This happens when the user closes the panel or when the panel is closed programatically
         this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
-        // Update the content based on view changes
-        this._panel.onDidChangeViewState(e => {
-            if (this._panel.visible) {
-                this._update();
-            }
-        }, null, this._disposables);
         // Handle messages from the webview
         this._panel.webview.onDidReceiveMessage(message => {
             var data;
@@ -104,10 +98,11 @@ class CatCodingPanel {
             file = require(fileName);
             file.tasks[0].args = [
                 "${file}",
-                "-I/home/brayan/Documents/Projects/VSCodeMemory",
+                "-I/home/brayan/Documents/Projects/VSCodeMemory/Library",
                 "-L/home/brayan/Documents/Projects/VSCodeMemory/Library",
                 "-lvscode",
                 "-lstdc++",
+                "-pthread",
                 "-o",
                 "${fileDirname}/a.out"
             ];
@@ -119,26 +114,21 @@ class CatCodingPanel {
             });
         }
         // If we already have a panel, show it.
-        if (CatCodingPanel.currentPanel) {
-            CatCodingPanel.currentPanel._panel.reveal(column);
+        if (CodingPanel.currentPanel) {
+            CodingPanel.currentPanel._panel.reveal(column);
             return;
         }
         // Otherwise, create a new panel.
-        const panel = vscode.window.createWebviewPanel(CatCodingPanel.viewType, 'Cat Coding', column || vscode.ViewColumn.One, {
+        const panel = vscode.window.createWebviewPanel(CodingPanel.viewType, 'Cat Coding', column || vscode.ViewColumn.One, {
             // Enable javascript in the webview
             enableScripts: true,
             // And restrict the webview to only loading content from our extension's `media` directory.
             localResourceRoots: [vscode.Uri.file(path.join(extensionPath, 'media'))]
         });
-        CatCodingPanel.currentPanel = new CatCodingPanel(panel, extensionPath);
+        CodingPanel.currentPanel = new CodingPanel(panel, extensionPath);
     }
     static revive(panel, extensionPath) {
-        CatCodingPanel.currentPanel = new CatCodingPanel(panel, extensionPath);
-    }
-    doRefactor() {
-        // Send a message to the webview webview.
-        // You can send any JSON serializable data.
-        this._panel.webview.postMessage({ command: 'refactor' });
+        CodingPanel.currentPanel = new CodingPanel(panel, extensionPath);
     }
     doStuff() {
         var datatable = "";
@@ -148,7 +138,7 @@ class CatCodingPanel {
         }, 100);
     }
     dispose() {
-        CatCodingPanel.currentPanel = undefined;
+        CodingPanel.currentPanel = undefined;
         // Clean up our resources
         this._panel.dispose();
         while (this._disposables.length) {
@@ -161,24 +151,13 @@ class CatCodingPanel {
     _update() {
         const webview = this._panel.webview;
         // Vary the webview's content based on where it is located in the editor.
-        switch (this._panel.viewColumn) {
-            case vscode.ViewColumn.Two:
-                this._updateForCat(webview, 'Compiling Cat');
-                return;
-            case vscode.ViewColumn.Three:
-                this._updateForCat(webview, 'Testing Cat');
-                return;
-            case vscode.ViewColumn.One:
-            default:
-                this._updateForCat(webview, 'Coding Cat');
-                return;
-        }
+        this._updateForCat(webview);
     }
-    _updateForCat(webview, catName) {
-        this._panel.title = catName;
-        this._panel.webview.html = this._getHtmlForWebview(webview, cats[catName]);
+    _updateForCat(webview) {
+        this._panel.title = "Heap Visualizer";
+        this._panel.webview.html = this._getHtmlForWebview(webview);
     }
-    _getHtmlForWebview(webview, catGifPath) {
+    _getHtmlForWebview(webview) {
         // Local path to main script run in the webview
         const scriptPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'media', 'main.js'));
         // And the uri we use to load this script in the webview
@@ -207,9 +186,9 @@ class CatCodingPanel {
 				<h3>Visualizer</h3>
 
 
-				<input type="radio" id="local" name="settings" value="local" checked="checked">
+				<input type="radio" id="local" name="settings" value="local">
 				<label for="male">Local</label><br>
-				<input type="radio" id="remote" name="settings" value="remote" disabled="true">
+				<input type="radio" id="remote" name="settings" value="remote">
 				<label for="female">Remote</label><br>
 				
 				<h3></h3>
@@ -249,7 +228,7 @@ class CatCodingPanel {
 			</html>`;
     }
 }
-CatCodingPanel.viewType = 'catCoding';
+CodingPanel.viewType = 'vsCoding';
 function getNonce() {
     let text = '';
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
