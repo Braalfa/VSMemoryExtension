@@ -99,12 +99,6 @@ function onRemoteSettings(){
     
     var table = document.getElementById('table');
 
-
-
-
-    setInterval(() => {
-        counter.textContent = currentCount++;}, 100);
-
         window.addEventListener('message', event => {
             const message = event.data; // The json data that the extension sent
             switch (message.command) {

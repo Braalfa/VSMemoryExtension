@@ -285,7 +285,7 @@ class CodingPanel {
                 <title>Cat Coding</title>
             </head>
             <body>
-                <h1 id="lines-of-code-counter">0</h1>
+                <h1 id="lines-of-code-counter"></h1>
 				<h2>Heap Visualizer </h2>
 
 					
