@@ -3,41 +3,19 @@
 
 var vscode;
 
-
-
 function updateStuff(stuff){
-    var table = document.getElementById('table');
-
     table.innerHTML = "<tr><th>Id</th><th>Address</th><th>Type</th><th>Value</th><th>References</th></tr>";
     var status=stuff;
     status=status.split(";");
-    for (var i = 0; i < status.length; i++) {
+    for (var i = 0; i < status.length/5-1; i++) {
         var str = document.createElement("tr");
         for (var j = 0; j < 5; j++) {
             var cell = document.createElement("td");
-            var textocell = document.createTextNode(status[i+j*5]);
+            var textocell = document.createTextNode(status[5*i+j]);
             cell.appendChild(textocell);
             str.appendChild(cell);
         }
-    }
-    table.appendChild(str);
-
-}
-
-
-function updateStatus(success){
-    if(success){
-        remote.disabled=false;
-        onRemote();
-
-    }else{
-        onLocal();
-        remote.disabled=true;
-        vscode.postMessage({
-            command: 'alert',
-            text: "Connection failed 🐛"
-        });
-
+        table.appendChild(str);
     }
 }
 
@@ -65,17 +43,17 @@ function onLocal(){
 function onRemoteSettings(){
     const local = document.getElementById('local');
     const remote = document.getElementById('remote');
-
+    remote.disabled=false;
     var ip=document.getElementById("ip");
     var port=document.getElementById("port");
     var pass=document.getElementById("password");
     var user=document.getElementById("user");
+    var send =ip.value+"\n"+port.value+"\n"+user.value+"\n"
+    +pass.value;
+
     vscode.postMessage({
         command:'settings',
-        ip:"ip",
-        port:"port",
-        password:"password",
-        user:"user"
+        text: send.toString()
     });
 }
 
@@ -98,13 +76,12 @@ function onRemoteSettings(){
     local.onclick=onLocal;
     remote.onclick=onRemote;
     settings.onclick=onRemoteSettings;
-
     
+    var table = document.getElementById('table');
 
-    setInterval(() => {
 
-        }, 100);
-    
+
+
     setInterval(() => {
         counter.textContent = currentCount++;}, 100);
 
@@ -116,10 +93,7 @@ function onRemoteSettings(){
                     counter.textContent = currentCount;
                     break;
                 case 'data':
-                    updateStuff(message.data);
-                    break;
-                case "status":
-                    updateStatus(message.data);
+                    updateStuff(message.text);
                     break;
             }
         });

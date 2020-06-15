@@ -47,22 +47,35 @@ class CatCodingPanel {
         }, null, this._disposables);
         // Handle messages from the webview
         this._panel.webview.onDidReceiveMessage(message => {
+            var data;
             console.log(message.text);
             switch (message.command) {
                 case 'settings':
-                    vscode.window.showErrorMessage(message.text);
-                    //Code for set settings
+                    data = message.text;
+                    fs.writeFile("/home/brayan/Documents/Projects/VSCodeMemory/Library/clientsettings.txt", message.text, (err) => {
+                        if (err)
+                            console.log(err);
+                        console.log("Successfully Written to File.");
+                    });
                     return;
                 case 'alert':
                     vscode.window.showErrorMessage(message.text);
                     return;
                 case 'local':
-                    vscode.window.showErrorMessage(message.text);
-                    //Code for set local
+                    data = "local";
+                    fs.writeFile("/home/brayan/Documents/Projects/VSCodeMemory/Library/local.txt", data, (err) => {
+                        if (err)
+                            console.log(err);
+                        console.log("Successfully Written to File.");
+                    });
                     return;
                 case 'remote':
-                    vscode.window.showErrorMessage(message.text);
-                    //Code for remote
+                    data = "remote";
+                    fs.writeFile("/home/brayan/Documents/Projects/VSCodeMemory/Library/local.txt", data, (err) => {
+                        if (err)
+                            console.log(err);
+                        console.log("Successfully Written to File.");
+                    });
                     return;
             }
         }, null, this._disposables);
@@ -128,10 +141,11 @@ class CatCodingPanel {
         this._panel.webview.postMessage({ command: 'refactor' });
     }
     doStuff() {
-        // Send file info
-        //	setInterval(() => {
-        //		this._panel.webview.postMessage({ command: 'data', data:vsinterface.getUpdate() });
-        //  }, 100);
+        var datatable = "";
+        setInterval(() => {
+            datatable = fs.readFileSync("/home/brayan/Documents/Projects/VSCodeMemory/Library/data.txt", { encoding: 'utf8' });
+            this._panel.webview.postMessage({ command: 'data', text: datatable });
+        }, 100);
     }
     dispose() {
         CatCodingPanel.currentPanel = undefined;
