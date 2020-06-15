@@ -3,6 +3,10 @@
 
 var vscode;
 
+/**
+ * Funcion para actualizar tabla del webview
+ * @param {} stuff String con informacion actualizada
+ */
 function updateStuff(stuff){
     table.innerHTML = "<tr><th>Id</th><th>Address</th><th>Type</th><th>Value</th><th>References</th></tr>";
     var status=stuff;
@@ -19,6 +23,10 @@ function updateStuff(stuff){
     }
 }
 
+
+/**
+ * Funcion para establecer las configuraciones remotas
+ */
 function onRemote() {
     const local = document.getElementById('local');
     const remote = document.getElementById('remote');
@@ -29,6 +37,10 @@ function onRemote() {
     });
 };
 
+
+/**
+ * Funcion para establecer las configuraciones locales
+ */
 function onLocal(){
     const local = document.getElementById('local');
     const remote = document.getElementById('remote');
@@ -40,6 +52,9 @@ function onLocal(){
 
 };
 
+/**
+ * Funcion para establecer los settings del cliente 
+ */
 function onRemoteSettings(){
     const local = document.getElementById('local');
     const remote = document.getElementById('remote');
@@ -57,6 +72,11 @@ function onRemoteSettings(){
     });
 }
 
+
+/**
+ * Funcion principal para asignar funciones a los botones y para establecer un listener
+ * de los cambios en el Garbage Collector
+ */
 (function () {
 
 

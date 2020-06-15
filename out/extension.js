@@ -10,10 +10,20 @@ const cats = {
     'Compiling Cat': 'https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif',
     'Testing Cat': 'https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif'
 };
+/**
+ * Funcion para asignar la funcion a cada comando del command pallete
+ * @param context
+ */
 function activate(context) {
+    /**
+     * Se asigna el comando vscodememory a su respectiva funcion
+     */
     context.subscriptions.push(vscode.commands.registerCommand('vscodememory.start', () => {
         CodingPanel.createOrShow(context.extensionPath);
     }));
+    /**
+     * Se Registra el webview
+     */
     if (vscode.window.registerWebviewPanelSerializer) {
         // Make sure we register a serializer in activation event
         vscode.window.registerWebviewPanelSerializer(CodingPanel.viewType, {
@@ -26,20 +36,24 @@ function activate(context) {
 }
 exports.activate = activate;
 /**
- * Manages cat coding webview panels
+ * Se maneja el panel principal
  */
 class CodingPanel {
+    /**
+     * Metodo Constructor
+     * @param panel Nuevo panel
+     * @param extensionPath  Ruta de la extension
+     */
     constructor(panel, extensionPath) {
         this._disposables = [];
         this._panel = panel;
         this._extensionPath = extensionPath;
-        // Set the webview's initial html content
+        //Se establece el contenido web
         this._update();
         this.doStuff();
-        // Listen for when the panel is disposed
-        // This happens when the user closes the panel or when the panel is closed programatically
+        //Se esta atento a si se cierra el programa para eliminarlo
         this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
-        // Handle messages from the webview
+        //Se manejan los mensajes entre el webview y la extension
         this._panel.webview.onDidReceiveMessage(message => {
             var data;
             console.log(message.text);
@@ -74,17 +88,23 @@ class CodingPanel {
             }
         }, null, this._disposables);
     }
+    /**
+     * Metodo para crear, o actualizar, el webview
+     * @param extensionPath
+     */
     static createOrShow(extensionPath) {
         const column = vscode.window.activeTextEditor
             ? vscode.window.activeTextEditor.viewColumn
             : undefined;
         var s = vscode.workspace.rootPath;
         if (s != undefined) {
+            //Se copia la biblioteca dinamica en el proyecto
             fs.copyFile("/home/brayan/Documents/Projects/VSCodeMemory/Library/libvscode.so", path.join(s, "libvscode.so"), (err) => {
                 if (err)
                     throw err;
                 console.log("was copied to destination");
             });
+            //Se copian las configuraciones para incluir la biblioteca
             var fileName = path.join(s, ".vscode/c_cpp_properties.json");
             var file = require(fileName);
             file.configurations[0].includePath[file.configurations[0].includePath.length] = "/home/brayan/Documents/Projects/VSCodeMemory/Library/**";
@@ -113,23 +133,30 @@ class CodingPanel {
                 console.log('writing to ' + fileName);
             });
         }
-        // If we already have a panel, show it.
+        // Si ya hay un panel, se muestra
         if (CodingPanel.currentPanel) {
             CodingPanel.currentPanel._panel.reveal(column);
             return;
         }
-        // Otherwise, create a new panel.
+        // Sino, se muestra 
         const panel = vscode.window.createWebviewPanel(CodingPanel.viewType, 'Cat Coding', column || vscode.ViewColumn.One, {
-            // Enable javascript in the webview
+            // Se autoriza javascript en el webvies
             enableScripts: true,
-            // And restrict the webview to only loading content from our extension's `media` directory.
             localResourceRoots: [vscode.Uri.file(path.join(extensionPath, 'media'))]
         });
         CodingPanel.currentPanel = new CodingPanel(panel, extensionPath);
     }
+    /**
+     * Se actualiza el panel
+     * @param panel
+     * @param extensionPath
+     */
     static revive(panel, extensionPath) {
         CodingPanel.currentPanel = new CodingPanel(panel, extensionPath);
     }
+    /**
+     * Funcion para actualizar el contenido de la tabla
+     */
     doStuff() {
         var datatable = "";
         setInterval(() => {
@@ -137,6 +164,9 @@ class CodingPanel {
             this._panel.webview.postMessage({ command: 'data', text: datatable });
         }, 100);
     }
+    /**
+     * Funcion para desechar el panel
+     */
     dispose() {
         CodingPanel.currentPanel = undefined;
         // Clean up our resources
@@ -148,21 +178,30 @@ class CodingPanel {
             }
         }
     }
+    /**
+     * Funcion para actualizar webview
+     */
     _update() {
         const webview = this._panel.webview;
-        // Vary the webview's content based on where it is located in the editor.
         this._updateForCat(webview);
     }
+    /**
+     * Funcion para inicializar panel html de webview
+     * @param webview Panel de webview
+     */
     _updateForCat(webview) {
         this._panel.title = "Heap Visualizer";
         this._panel.webview.html = this._getHtmlForWebview(webview);
     }
+    /**
+     * Se crea el panel del webview
+     * @param webview Panel del webview
+     */
     _getHtmlForWebview(webview) {
         // Local path to main script run in the webview
         const scriptPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'media', 'main.js'));
-        // And the uri we use to load this script in the webview
         const scriptUri = webview.asWebviewUri(scriptPathOnDisk);
-        // Use a nonce to whitelist which scripts can be run
+        // Funcion para extablecer cuales scripts se pueden correr
         const nonce = getNonce();
         return `<!DOCTYPE html>
             <html lang="en">
